@@ -4,49 +4,453 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gertrude Ans - Portfolio</title>
-    <link rel="stylesheet" href="./css/reset.css" />
-    <link rel="stylesheet" href="./css/portfolio.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary: #5d4037;
+        --secondary: #ffd54f;
+        --dark: #333333;
+        --light: #f8f9fa;
+        --transition: all 0.3s ease;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* More dynamic hero section */
+      .hero-blob {
+        animation: blob-movement 15s infinite alternate ease-in-out;
+      }
+
+      @keyframes blob-movement {
+        0% {
+          transform: scale(1) translate(0, 0);
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        33% {
+          transform: scale(1.05) translate(-10px, 10px);
+          border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        }
+        66% {
+          transform: scale(0.95) translate(10px, -10px);
+          border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+        }
+        100% {
+          transform: scale(1) translate(0, 0);
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+      }
+
+      /* Enhanced buttons */
+      .hero-btn {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .hero-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .hero-btn.primary {
+        background: #ffd54f;
+        color: #5d4037;
+      }
+
+      .hero-btn.primary:hover {
+        background: #ffca28;
+      }
+
+      .hero-btn.secondary {
+        border: 2px solid #5d4037;
+        color: #5d4037;
+      }
+
+      .hero-btn.secondary:hover {
+        background: #5d4037;
+        color: white;
+      }
+
+      .fixed-sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+      }
+
+      .main-content {
+        margin-left: 250px; /* Should match sidebar width */
+        width: calc(100% - 250px); /* Adjust width to account for sidebar */
+        transition: all 0.3s ease;
+      }
+
+      .nav-link {
+        position: relative;
+        display: inline-block;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: var(--secondary);
+        transition: var(--transition);
+      }
+
+      .nav-link:hover::after,
+      .nav-link.active::after {
+        width: 100%;
+      }
+
+      .hero-blob {
+        animation: blob-movement 10s infinite alternate ease-in-out;
+      }
+
+      @keyframes blob-movement {
+        0% {
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        25% {
+          border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        }
+        50% {
+          border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+        }
+        75% {
+          border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+        }
+        100% {
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+      }
+
+      .project-card {
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .project-card img {
+        transition: transform 0.5s ease;
+      }
+
+      .project-card:hover img {
+        transform: scale(1.05);
+      }
+
+      .project-overlay {
+        background: rgba(93, 64, 55, 0.8);
+        opacity: 0;
+        transition: var(--transition);
+      }
+
+      .project-card:hover .project-overlay {
+        opacity: 1;
+      }
+
+      .skill-bar {
+        position: relative;
+        height: 8px;
+        border-radius: 10px;
+        background: #f0f0f0;
+        margin-bottom: 25px;
+      }
+
+      .skill-bar::before {
+        content: attr(data-skill);
+        position: absolute;
+        top: -25px;
+        left: 0;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .skill-bar::after {
+        content: attr(data-percentage);
+        position: absolute;
+        top: -25px;
+        right: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .skill-percentage {
+        height: 8px;
+        border-radius: 10px;
+        background: var(--secondary);
+        position: relative;
+        transition: width 1.5s ease-in-out;
+      }
+
+      .skill-percentage::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: -4px;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        background: var(--secondary);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 45px; /* Increase left padding to make room for the date */
+        margin-bottom: 50px;
+      }
+
+      .timeline-date {
+        position: absolute;
+        top: -10px;
+        left: 40px; /* Move the date bubble further right */
+        background: #ffd54f;
+        color: #5d4037;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap; /* Prevent date from wrapping */
+        z-index: 2; /* Ensure date stays above other elements */
+      }
+
+      .timeline-item h4 {
+        margin-top: 20px; /* Add more space above the title */
+        padding-left: 60px; /* Move title text to the right of the date */
+        position: relative;
+        z-index: 1;
+      }
+
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: var(--secondary);
+      }
+
+      .timeline-item::after {
+        content: "";
+        position: absolute;
+        left: -8px;
+        top: 0;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 4px solid var(--secondary);
+      }
+
+      .form-input {
+        transition: var(--transition);
+        border: 2px solid transparent;
+      }
+
+      .form-input:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(255, 213, 79, 0.3);
+      }
+
+      .contact-btn {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .contact-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--primary);
+        transition: var(--transition);
+        z-index: -1;
+      }
+
+      .contact-btn:hover::before {
+        left: 0;
+      }
+
+      .social-icon {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .social-icon:hover {
+        background: var(--secondary);
+        color: var(--primary);
+        transform: translateY(-5px);
+      }
+
+      /* Dark Mode Styles */
+      .dark-mode {
+        background-color: #121212;
+        color: #f0f0f0;
+      }
+
+      .dark-mode .bg-white {
+        background-color: #1e1e1e;
+      }
+
+      .dark-mode .text-gray-600,
+      .dark-mode .text-gray-700 {
+        color: #b0b0b0;
+      }
+
+      .dark-mode .bg-gray-50 {
+        background-color: #171717;
+      }
+
+      .dark-mode .bg-gray-200 {
+        background-color: #2a2a2a;
+      }
+
+      .dark-mode .form-input {
+        background-color: #2a2a2a;
+        color: #f0f0f0;
+        border-color: #3a3a3a;
+      }
+
+      /* Mobile Styles */
+      @media (max-width: 768px) {
+        .fixed-sidebar {
+          transform: translateX(-100%);
+        }
+
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .timeline-item {
+          padding-left: 30px;
+        }
+
+        .timeline-date {
+          position: relative;
+          left: 0;
+          top: 0;
+          display: inline-block;
+          margin-bottom: 10px;
+        }
+
+        .timeline-item h4 {
+          padding-left: 0;
+          margin-top: 10px;
+        }
+
+        .mobile-nav-active .fixed-sidebar {
+          transform: translateX(0);
+        }
+
+        .mobile-nav-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.7);
+          z-index: 999;
+          display: none;
+        }
+
+        .mobile-nav-active .mobile-nav-overlay {
+          display: block;
+        }
+      }
+
+      /* Animation classes */
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .fade-in.appear {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
   </head>
-  <body class="bg-white font-sans">
+  <body class="bg-white">
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
     <!-- Fixed Sidebar -->
     <aside
-      class="fixed-sidebar bg-[#6C442F] text-white p-6 flex flex-col justify-between"
+      class="fixed-sidebar bg-[#5D4037] text-white p-8 flex flex-col justify-between"
     >
       <div>
-        <h1 class="text-3xl font-bold mb-10">Gertrude.</h1>
+        <h1 class="text-3xl font-bold mb-12 relative">
+          Gertrude.
+          <span class="absolute -bottom-2 left-0 w-12 h-1 bg-[#FFD54F]"></span>
+        </h1>
         <nav class="mt-5">
-          <ul class="space-y-6">
+          <ul class="space-y-8">
+            <li>
+              <a
+                href="#home"
+                class="nav-link text-lg hover:text-[#FFD54F] transition-colors"
+                >Home</a
+              >
+            </li>
             <li>
               <a
                 href="#about"
-                data-section="about"
-                class="hover:text-[#FFDE59] transition-colors"
+                class="nav-link text-lg hover:text-[#FFD54F] transition-colors"
                 >About</a
               >
             </li>
             <li>
               <a
                 href="#experience"
-                data-section="experience"
-                class="hover:text-[#FFDE59] transition-colors"
+                class="nav-link text-lg hover:text-[#FFD54F] transition-colors"
                 >Experience</a
               >
             </li>
             <li>
               <a
                 href="#works"
-                data-section="works"
-                class="hover:text-[#FFDE59] transition-colors"
-                >Works</a
+                class="nav-link text-lg hover:text-[#FFD54F] transition-colors"
+                >Portfolio</a
               >
             </li>
             <li>
               <a
                 href="#contact"
-                data-section="contact"
-                class="hover:text-[#FFDE59] transition-colors"
+                class="nav-link text-lg hover:text-[#FFD54F] transition-colors"
                 >Contact</a
               >
             </li>
@@ -56,72 +460,91 @@
 
       <!-- Footer inside Sidebar -->
       <footer>
-        <p class="text-sm mb-4">contact@yoursite.com</p>
+        <p class="text-sm mb-4 opacity-75">contact@gertrudedev.com</p>
         <div class="flex space-x-4">
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="github" class="w-5 h-5"></i
-          ></a>
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="linkedin" class="w-5 h-5"></i
-          ></a>
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="mail" class="w-5 h-5"></i
-          ></a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="#" class="social-icon">
+            <i class="fab fa-twitter"></i>
+          </a>
         </div>
       </footer>
     </aside>
 
     <!-- Mobile Menu Toggle -->
-    <div class="md:hidden fixed top-5 right-5 z-50">
-      <button id="mobile-menu-toggle">
-        <i data-lucide="menu" class="w-8 h-8 text-[#6C442F]"></i>
+    <div class="md:hidden fixed top-5 right-5 z-[1001]">
+      <button
+        id="mobileMenuToggle"
+        class="bg-[#5D4037] text-white p-3 rounded-md shadow-lg"
+      >
+        <i class="fas fa-bars" id="menuIcon"></i>
       </button>
     </div>
 
     <!-- Theme Toggle -->
     <div class="fixed top-5 right-20 z-50">
-      <button id="theme-toggle">
-        <i
-          data-lucide="moon"
-          id="theme-icon"
-          class="w-7 h-7 text-[#6C442F]"
-        ></i>
+      <button
+        id="themeToggle"
+        class="bg-[#5D4037] text-white p-3 rounded-md shadow-lg"
+      >
+        <i class="fas fa-moon" id="themeIcon"></i>
       </button>
     </div>
 
     <!-- Hero Section -->
     <section
-      id="hero"
+      id="home"
       class="main-content min-h-screen flex items-center py-20"
     >
-      <div class="container mx-auto px-6">
+      <div class="container mx-auto px-6 ">
         <div class="flex flex-col md:flex-row items-center">
-          <div class="md:w-1/2 mb-10 md:mb-0 relative">
+          <div class="md:w-1/2 mb-10 md:mb-0 relative fade-in pl-[15%]">
             <div
-              class="absolute top-0 left-0 w-64 h-64 bg-[#FFDE59] rounded-[30%] -z-10 transform -translate-x-8 -translate-y-8"
+              class="hero-blob absolute top-20 left-0 w-72 h-72 bg-[#FFD54F] rounded-[30%] -z-10 transform -translate-x-8 -translate-y-8 pl-20"
             ></div>
             <img
-              src="./images/heroimg.jpg"
+              src="./images/portfolioImg-removebg.png"
               alt="Gertrude Ans"
-              class="w-64 h-auto object-cover rounded-xl z-10 relative shadow-lg"
+              class="w-72 h-auto object-cover rounded-xl z-10 relative shadow-0.5xl"
             />
           </div>
-          <div class="md:w-1/2 text-center md:text-left md:pl-10">
-            <p class="text-lg font-light tracking-widest mb-3 text-gray-600">
-              WEB DEVELOPER
-            </p>
-            <h2 class="text-5xl md:text-6xl font-bold text-[#6C442F] mb-6">
-              Gertrude Ans.
-            </h2>
-            <p class="text-gray-600 mb-8 max-w-md">
-              Passionate web developer creating elegant, responsive, and
-              user-friendly digital experiences.
-            </p>
-            <a
-              href="#contact"
-              class="bg-[#FFDE59] hover:bg-[#6C442F] text-white py-3 px-8 rounded-md transition-colors font-medium"
-              >Let's Talk</a
+          
+          <div class="md:w-1/2 text-center md:text-left md:pl-10 fade-in">
+            <p
+              class="text-lg font-light tracking-widest mb-3 text-gray-600 inline-block relative"
             >
+              <span
+                class="absolute -left-6 top-1/2 w-4 h-[2px] bg-[#FFD54F]"
+              ></span>
+              WEB DEVELOPER
+              <span
+                class="absolute -right-6 top-1/2 w-4 h-[2px] bg-[#FFD54F]"
+              ></span>
+            </p>
+            <h2 class="text-5xl md:text-6xl font-bold text-[#5D4037] mb-6">
+              Gertrude <span class="text-black dark:text-white">Ans.</span>
+            </h2>
+            <p class="text-gray-600 mb-8 max-w-md leading-relaxed">
+              Passionate web developer creating elegant, responsive, and
+              user-friendly digital experiences with a focus on clean code and
+              modern technologies.
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+              <a
+                href="#contact"
+                class="contact-btn bg-[#FFD54F] text-[#5D4037] py-3 px-8 rounded-md transition-colors font-medium shadow-lg hover:text-white"
+                >Let's Talk</a
+              >
+              <a
+                href="#works"
+                class="border-2 border-[#5D4037] text-[#5D4037] bg-transparent py-3 px-8 rounded-md transition-colors font-medium hover:bg-[#5D4037] hover:text-white"
+                >View Portfolio</a
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -130,61 +553,148 @@
     <!-- About Section -->
     <section id="about" class="main-content py-20 bg-gray-50">
       <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-[#6C442F] mb-16 text-center">
-          About Me
-        </h2>
+        <div class="mb-12 text-center fade-in">
+          <span
+            class="inline-block py-1 px-4 bg-[#FFD54F] text-[#5D4037] font-medium text-sm rounded-full mb-3"
+            >ABOUT ME</span
+          >
+          <h2 class="text-4xl font-bold text-[#5D4037] mb-4">
+            Get to Know <span class="text-[#5D4037]">Me</span>
+          </h2>
+          <div class="w-20 h-1 bg-[#FFD54F] mx-auto"></div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
           <!-- Education Section -->
-          <div>
-            <h3 class="text-2xl font-bold text-[#6C442F] mb-8">Education</h3>
+          <div class="fade-in">
+            <h3
+              class="text-2xl font-bold text-[#5D4037] mb-8 flex items-center"
+            >
+              <span
+                class="inline-block bg-[#FFD54F] w-10 h-10 rounded-full flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-graduation-cap text-[#5D4037]"></i>
+              </span>
+              Education
+            </h3>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Feb 2025 - May 2025</p>
-              <h4 class="text-xl font-bold mb-1">Backend Development</h4>
-              <p class="text-gray-700">Mest Africa</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2025</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Backend Development
+                </h4>
+                <p class="text-gray-600 mb-2">Mest Africa</p>
+                <p class="text-gray-600 text-sm">In Progress</p>
+              </div>
             </div>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">July 2023 - June 2024</p>
-              <h4 class="text-xl font-bold mb-1">Full Stack Web Development</h4>
-              <p class="text-gray-700">Developers In Vogue</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2024</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Full Stack Web Development
+                </h4>
+                <p class="text-gray-600 mb-2">Developers In Vogue</p>
+                <p class="text-gray-600 text-sm">July 2023 - June 2024</p>
+              </div>
             </div>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Sep 2017 - Sep 2021</p>
-              <h4 class="text-xl font-bold mb-1">Bsc. Admin (Accounting)</h4>
-              <p class="text-gray-700">Central University</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2021</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Bsc. Admin (Accounting)
+                </h4>
+                <p class="text-gray-600 mb-2">Central University</p>
+                <p class="text-gray-600 text-sm">Sep 2017 - Sep 2021</p>
+              </div>
             </div>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Dec 2015 - June 2017</p>
-              <h4 class="text-xl font-bold mb-1">Database Technology</h4>
-              <p class="text-gray-700">IPMC</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2017</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Database Technology
+                </h4>
+                <p class="text-gray-600 mb-2">IPMC</p>
+                <p class="text-gray-600 text-sm">Dec 2015 - June 2017</p>
+              </div>
             </div>
           </div>
 
           <!-- Experience Section -->
-          <div>
-            <h3 class="text-2xl font-bold text-[#6C442F] mb-8">Experiences</h3>
+          <div class="fade-in">
+            <h3
+              class="text-2xl font-bold text-[#5D4037] mb-8 flex items-center"
+            >
+              <span
+                class="inline-block bg-[#FFD54F] w-10 h-10 rounded-full flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-briefcase text-[#5D4037]"></i>
+              </span>
+              Experience
+            </h3>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Jun 2024 - Aug 2024</p>
-              <h4 class="text-xl font-bold mb-1">Backend Developer (Intern)</h4>
-              <p class="text-gray-700">Hurisoft, Inc. Accra</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2024</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Backend Developer (Intern)
+                </h4>
+                <p class="text-gray-600 mb-2">Hurisoft, Inc. Accra</p>
+                <p class="text-gray-600 text-sm">Jun 2024 - Aug 2024</p>
+                <ul class="mt-3 space-y-2 text-sm text-gray-600">
+                  <li class="flex items-start">
+                    <span class="text-[#FFD54F] mr-2"
+                      ><i class="fas fa-check"></i
+                    ></span>
+                    Automated deployment scripts using TypeScript and Firebase
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-[#FFD54F] mr-2"
+                      ><i class="fas fa-check"></i
+                    ></span>
+                    Integrated UI components with backend infrastructure
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Oct 2021 - Aug 2022</p>
-              <h4 class="text-xl font-bold mb-1">Call Taker</h4>
-              <p class="text-gray-700">National Signal Bureau, Accra</p>
+            <div class="timeline-item">
+              <span class="timeline-date">2022</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Call Taker
+                </h4>
+                <p class="text-gray-600 mb-2">National Signal Bureau, Accra</p>
+                <p class="text-gray-600 text-sm">Oct 2021 - Aug 2022</p>
+                <ul class="mt-3 space-y-2 text-sm text-gray-600">
+                  <li class="flex items-start">
+                    <span class="text-[#FFD54F] mr-2"
+                      ><i class="fas fa-check"></i
+                    ></span>
+                    Managed emergency communications and data entry
+                  </li>
+                  <li class="flex items-start">
+                    <span class="text-[#FFD54F] mr-2"
+                      ><i class="fas fa-check"></i
+                    ></span>
+                    Coordinated response activities with local authorities
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <div class="mb-8 border-l-4 border-[#FFDE59] pl-6">
-              <p class="text-gray-500 mb-1">Mar 2019 - Jun 2019</p>
-              <h4 class="text-xl font-bold mb-1">Reception Assistant</h4>
-              <p class="text-gray-700">
-                Central University, Miotso, Prampram, Ghana
-              </p>
+            <div class="timeline-item">
+              <span class="timeline-date">2019</span>
+              <div class="mt-8 pl-4">
+                <h4 class="text-xl font-bold mb-1 text-[#5D4037]">
+                  Reception Assistant
+                </h4>
+                <p class="text-gray-600 mb-2">Central University, Miotso</p>
+                <p class="text-gray-600 text-sm">Mar 2019 - Jun 2019</p>
+              </div>
             </div>
           </div>
         </div>
@@ -194,167 +704,209 @@
     <!-- Experience Section -->
     <section id="experience" class="main-content py-20">
       <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-[#6C442F] mb-16 text-center">
-          Experience
-        </h2>
+        <div class="mb-12 text-center fade-in">
+          <span
+            class="inline-block py-1 px-4 bg-[#FFD54F] text-[#5D4037] font-medium text-sm rounded-full mb-3"
+            >SKILLS & EXPERTISE</span
+          >
+          <h2 class="text-4xl font-bold text-[#5D4037] mb-4">
+            My <span class="text-[#5D4037]">Experience</span>
+          </h2>
+          <div class="w-20 h-1 bg-[#FFD54F] mx-auto"></div>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
           <!-- Professional Experience Column -->
-          <div>
-            <h3 class="text-2xl font-bold text-[#6C442F] mb-8">
+          <div class="fade-in">
+            <h3
+              class="text-2xl font-bold text-[#5D4037] mb-8 flex items-center"
+            >
+              <span
+                class="inline-block bg-[#FFD54F] w-10 h-10 rounded-full flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-laptop-code text-[#5D4037]"></i>
+              </span>
               Professional Experience
             </h3>
 
             <!-- Experience Item 1 -->
-            <div class="mb-12 border-l-4 border-[#6C442F] pl-6">
-              <div class="flex justify-between items-start mb-2">
-                <h4 class="text-xl font-semibold">
+            <div
+              class="bg-white p-6 rounded-lg shadow-lg mb-8 hover:shadow-xl transition-all"
+            >
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <h4 class="text-xl font-semibold text-[#5D4037]">
                   Backend Web Developer || Product Owner
                 </h4>
                 <span
-                  class="text-sm bg-[#FFDE59] text-[#6C442F] px-3 py-1 rounded-full font-medium"
-                  >07/23 - 06/24</span
+                  class="text-sm bg-[#FFD54F] text-[#5D4037] px-3 py-1 rounded-full font-medium mt-2 md:mt-0"
                 >
+                  07/23 - 06/24
+                </span>
               </div>
-              <p class="text-gray-700 mb-3">Hurisoft Inc.</p>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li>
-                  Developed and maintained automated scripts for deploying
-                  applications to cloud-based environments using TypeScript and
-                  Firebase
+              <p
+                class="text-gray-700 dark:text-gray-300 mb-4 flex items-center"
+              >
+                <i class="fas fa-building mr-2 text-[#FFD54F]"></i>
+                Hurisoft Inc.
+              </p>
+              <ul class="space-y-3 text-gray-600 dark:text-gray-400">
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span
+                    >Developed and maintained automated scripts for deploying
+                    applications to cloud-based environments using TypeScript
+                    and Firebase</span
+                  >
                 </li>
-                <li>
-                  Collaborated with frontend developers to ensure a seamless
-                  integration of UI components with the backend infrastructure
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span
+                    >Collaborated with frontend developers to ensure a seamless
+                    integration of UI components with the backend
+                    infrastructure</span
+                  >
                 </li>
-                <li>
-                  Created RESTful web services using Firebase and Node.js for
-                  various web applications
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span
+                    >Created RESTful web services using Firebase and Node.js for
+                    various web applications</span
+                  >
                 </li>
               </ul>
             </div>
 
             <!-- Experience Item 2 -->
-            <div class="mb-12 border-l-4 border-[#6C442F] pl-6">
-              <div class="flex justify-between items-start mb-2">
-                <h4 class="text-xl font-semibold">Frontend Developer</h4>
+            <div
+              class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all"
+            >
+              <div class="flex flex-wrap justify-between items-start mb-4">
+                <h4 class="text-xl font-semibold text-[#5D4037]">
+                  Frontend Developer
+                </h4>
                 <span
-                  class="text-sm bg-[#FFDE59] text-[#6C442F] px-3 py-1 rounded-full font-medium"
-                  >2020-2023</span
+                  class="text-sm bg-[#FFD54F] text-[#5D4037] px-3 py-1 rounded-full font-medium mt-2 md:mt-0"
                 >
+                  2020-2023
+                </span>
               </div>
-              <p class="text-gray-700 mb-3">
+              <p
+                class="text-gray-700 dark:text-gray-300 mb-4 flex items-center"
+              >
+                <i class="fas fa-building mr-2 text-[#FFD54F]"></i>
                 Developers In Vogue (Team Project)
               </p>
-              <ul class="list-disc list-inside text-gray-600 space-y-2">
-                <li>
-                  Developed and maintained client websites using HTML, CSS, and
-                  JavaScript
+              <ul class="space-y-3 text-gray-600 dark:text-gray-400">
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span
+                    >Developed and maintained client websites using HTML, CSS,
+                    and JavaScript</span
+                  >
                 </li>
-                <li>Collaborated with Backend to implement UI</li>
-                <li>
-                  Created reusable component libraries to improve development
-                  efficiency
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span>Collaborated with Backend to implement UI</span>
+                </li>
+                <li class="flex items-start">
+                  <span class="text-[#FFD54F] mr-3 mt-1"
+                    ><i class="fas fa-circle text-xs"></i
+                  ></span>
+                  <span
+                    >Created reusable component libraries to improve development
+                    efficiency</span
+                  >
                 </li>
               </ul>
             </div>
           </div>
 
           <!-- Skills Column -->
-          <div>
-            <h3 class="text-2xl font-bold text-[#6C442F] mb-8">
-              Skills & Expertise
+          <div class="fade-in">
+            <h3
+              class="text-2xl font-bold text-[#5D4037] mb-8 flex items-center"
+            >
+              <span
+                class="inline-block bg-[#FFD54F] w-10 h-10 rounded-full flex items-center justify-center mr-3"
+              >
+                <i class="fas fa-tools text-[#5D4037]"></i>
+              </span>
+              Technical Skills
             </h3>
-
-            <!-- Skill bars -->
-            <div class="space-y-8">
-              <!-- Skill 1 -->
-              <div>
-                <div class="flex justify-between mb-2">
-                  <span class="font-medium">HTML/CSS</span>
-                  <span class="text-[#6C442F] font-medium">95%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#FFDE59] h-2 rounded-full"
-                    style="width: 95%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Skill 2 -->
-              <div>
-                <div class="flex justify-between mb-2">
-                  <span class="font-medium">JavaScript</span>
-                  <span class="text-[#6C442F] font-medium">90%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#FFDE59] h-2 rounded-full"
-                    style="width: 90%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Skill 3 -->
-              <div>
-                <div class="flex justify-between mb-2">
-                  <span class="font-medium">TypeScript</span>
-                  <span class="text-[#6C442F] font-medium">85%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#FFDE59] h-2 rounded-full"
-                    style="width: 85%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Skill 4 -->
-              <div>
-                <div class="flex justify-between mb-2">
-                  <span class="font-medium">Tailwind CSS</span>
-                  <span class="text-[#6C442F] font-medium">90%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#FFDE59] h-2 rounded-full"
-                    style="width: 90%"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Skill 5 -->
-              <div>
-                <div class="flex justify-between mb-2">
-                  <span class="font-medium">Node.js</span>
-                  <span class="text-[#6C442F] font-medium">75%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    class="bg-[#FFDE59] h-2 rounded-full"
-                    style="width: 75%"
-                  ></div>
-                </div>
-              </div>
+            <div class="flex flex-wrap gap-3">
+              <span
+                class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+              >
+                <i class="fab fa-git-alt mr-2"></i>Html
+              </span>
+              <span
+                class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+              >
+                <i class="fab fa-git-alt mr-2"></i>Css
+              </span>
+              <span
+                class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+              >
+                <i class="fab fa-git-alt mr-2"></i>Javascript
+              </span>
+              <span
+                class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+              >
+                <i class="fab fa-git-alt mr-2"></i>TypeScript
+              </span>
+              <span
+                class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+              >
+                <i class="fab fa-git-alt mr-2"></i>Tailwindcss
+              </span>
             </div>
 
             <!-- Additional Skills -->
-            <div class="mt-12">
-              <h4 class="text-xl font-semibold mb-4">Additional Skills</h4>
+            <div>
+              <h4 class="text-xl font-semibold mb-6 mt-6 text-[#5D4037]">
+                Additional Expertise
+              </h4>
               <div class="flex flex-wrap gap-3">
                 <span
-                  class="bg-white px-4 py-2 rounded-full text-[#6C442F] border border-[#6C442F] hover:bg-[#6C442F] hover:text-white transition-colors"
-                  >Git & Github</span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
                 >
+                  <i class="fab fa-git-alt mr-2"></i>Git & Github
+                </span>
                 <span
-                  class="bg-white px-4 py-2 rounded-full text-[#6C442F] border border-[#6C442F] hover:bg-[#6C442F] hover:text-white transition-colors"
-                  >Figma</span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
                 >
+                  <i class="fab fa-figma mr-2"></i>Figma
+                </span>
                 <span
-                  class="bg-white px-4 py-2 rounded-full text-[#6C442F] border border-[#6C442F] hover:bg-[#6C442F] hover:text-white transition-colors"
-                  >MongoDB</span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
                 >
+                  <i class="fas fa-database mr-2"></i>MongoDB
+                </span>
+                <span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+                >
+                  <i class="fab fa-react mr-2"></i>React
+                </span>
+                <span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+                >
+                  <i class="fab fa-npm mr-2"></i>Firebase
+                </span>
+                <span
+                  class="px-4 py-2 rounded-full bg-white shadow-md hover:shadow-lg text-[#5D4037] border-l-4 border-[#FFD54F] transition-all hover:-translate-y-1"
+                >
+                  <i class="fas fa-sitemap mr-2"></i>REST APIs
+                </span>
               </div>
             </div>
           </div>
@@ -365,254 +917,217 @@
     <!-- Projects Section -->
     <section id="works" class="main-content py-20 bg-gray-50">
       <div class="container mx-auto px-6">
-        <div
-          class="flex flex-col md:flex-row justify-between items-center mb-16"
-        >
-          <div>
-            <p class="text-sm uppercase tracking-widest text-gray-500 mb-2">
-              SOME OF MY RECENT
-            </p>
-            <h2 class="text-4xl font-bold text-[#6C442F]">Projects</h2>
-          </div>
-          <div class="mt-6 md:mt-0">
-            <p class="text-gray-600 mb-4">Browse my latest work</p>
-            <a
-              href="#"
-              class="text-[#6C442F] font-medium border-b-2 border-[#FFDE59] pb-1 hover:text-[#FFDE59] transition-colors"
-              >View All Projects</a
-            >
-          </div>
+        <div class="mb-12 text-center fade-in">
+          <span
+            class="inline-block py-1 px-4 bg-[#FFD54F] text-[#5D4037] font-medium text-sm rounded-full mb-3"
+            >MY PORTFOLIO</span
+          >
+          <h2 class="text-4xl font-bold text-[#5D4037] mb-4">
+            Recent <span class="text-[#5D4037]">Projects</span>
+          </h2>
+          <div class="w-20 h-1 bg-[#FFD54F] mx-auto"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Project 1 -->
           <div
-            class="bg-white rounded-lg overflow-hidden shadow-md transition-all hover:shadow-xl transform hover:-translate-y-2"
+            class="project-card bg-white dark:bg-[#fff] rounded-xl overflow-hidden shadow-lg fade-in"
           >
-            <div class="h-56 bg-gray-200 relative overflow-hidden">
+            <div class="relative h-60 overflow-hidden">
               <div
-                class="absolute inset-0 bg-[#6C442F] opacity-30 hover:opacity-0 transition-opacity"
-              ></div>
-              <img
-                src="./images/project1.jpg"
-                alt="Medtrack Project"
+                style="
+                  background-image: url('./images//medtrack.png');
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                "
                 class="w-full h-full object-cover"
-              />
+              ></div>
+              <div
+                class="project-overlay absolute inset-0 flex items-center justify-center"
+              >
+                <div class="text-center p-4">
+                  <a
+                    href="https://project-medtrack.vercel.app/"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full mr-2 hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fas fa-link"></i>
+                  </a>
+                  <a
+                    href="https://github.com/abronoma/Project-Medtrack"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fab fa-github"></i>
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="p-6">
-              <h4 class="font-bold text-xl mb-2 text-[#6C442F]">
+              <h4 class="font-bold text-xl mb-3 text-[#5D4037]">
                 Medtrack Project
               </h4>
-              <p class="text-gray-600 mb-4">
-                A full-featured online pharmacy inventory management system.
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                A full-featured online pharmacy inventory management system with
+                order tracking and analytics.
               </p>
-              <div class="flex gap-2 flex-wrap">
+              <div class="flex gap-2 flex-wrap mb-4">
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
                   >React</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
                   >Node.js</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
                   >MongoDB</span
                 >
               </div>
+
               <a
-                href="#"
-                class="inline-block mt-4 text-[#6C442F] hover:text-[#FFDE59] transition-colors"
-                >View Project →</a
+                href="https://project-medtrack.vercel.app/"
+                class="inline-block bg-[#5D4037] text-white py-2 px-4 rounded-md hover:bg-[#FFD54F] hover:text-[#5D4037] transition-colors text-sm font-medium"
               >
+                View Details
+                <i class="fas fa-arrow-right ml-1"></i>
+              </a>
             </div>
           </div>
 
           <!-- Project 2 -->
           <div
-            class="bg-white rounded-lg overflow-hidden shadow-md transition-all hover:shadow-xl transform hover:-translate-y-2"
+            class="project-card bg-white dark:bg-[#fff] rounded-xl overflow-hidden shadow-lg fade-in"
           >
-            <div class="h-56 bg-gray-200 relative overflow-hidden">
-              <div
-                class="absolute inset-0 bg-[#6C442F] opacity-30 hover:opacity-0 transition-opacity"
-              ></div>
+            <div class="relative h-60 overflow-hidden">
               <img
-                src="./images/project2.jpg"
+                src="./images/WPL.png"
                 alt="Problems Log UI"
                 class="w-full h-full object-cover"
               />
+              <div
+                class="project-overlay absolute inset-0 flex items-center justify-center"
+              >
+                <div class="text-center p-4">
+                  <a
+                    href="https://project-medtrack-gxpl.vercel.app/"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full mr-2 hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fas fa-link"></i>
+                  </a>
+                  <a
+                    href="https://github.com/abronoma/Huri-World-Problems-Log"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fab fa-github"></i>
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="p-6">
-              <h4 class="font-bold text-xl mb-2 text-[#6C442F]">
+              <h4 class="font-bold text-xl mb-3 text-[#5D4037]">
                 Problems-Log-UI
               </h4>
-              <p class="text-gray-600 mb-4">
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
                 A responsive UI for people to log their problems anonymously to
-                receive assistance.
+                receive assistance and support.
               </p>
-              <div class="flex gap-2 flex-wrap">
+              <div class="flex gap-2 flex-wrap mb-4">
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
-                  >HTML</span
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
+                  >React</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
-                  >Tailwind CSS</span
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
+                  >Css</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
                   >JavaScript</span
                 >
               </div>
+
               <a
-                href="#"
-                class="inline-block mt-4 text-[#6C442F] hover:text-[#FFDE59] transition-colors"
-                >View Project →</a
+                href="https://project-medtrack-gxpl.vercel.app/"
+                class="inline-block bg-[#5D4037] text-white py-2 px-4 rounded-md hover:bg-[#FFD54F] hover:text-[#5D4037] transition-colors text-sm font-medium"
               >
+                View Details
+                <i class="fas fa-arrow-right ml-1"></i>
+              </a>
             </div>
           </div>
 
           <!-- Project 3 -->
           <div
-            class="bg-white rounded-lg overflow-hidden shadow-md transition-all hover:shadow-xl transform hover:-translate-y-2"
+            class="project-card bg-white dark:bg-[#fff] rounded-xl overflow-hidden shadow-lg fade-in"
           >
-            <div class="h-56 bg-gray-200 relative overflow-hidden">
-              <div
-                class="absolute inset-0 bg-[#6C442F] opacity-30 hover:opacity-0 transition-opacity"
-              ></div>
+            <div class="relative h-60 overflow-hidden">
               <img
-                src="./images/project3.jpg"
+                src="./images/todo.jpg"
                 alt="Crypthority"
                 class="w-full h-full object-cover"
               />
+              <div
+                class="project-overlay absolute inset-0 flex items-center justify-center"
+              >
+                <div class="text-center p-4">
+                  <a
+                    href="https://mest-todo-app.vercel.app/"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full mr-2 hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fas fa-link"></i>
+                  </a>
+                  <a
+                    href="https://github.com/abronoma/MEST-todo-app"
+                    class="inline-block bg-white text-[#5D4037] p-3 rounded-full hover:bg-[#FFD54F] transition-all"
+                  >
+                    <i class="fab fa-github"></i>
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="p-6">
-              <h4 class="font-bold text-xl mb-2 text-[#6C442F]">Crypthority</h4>
-              <p class="text-gray-600 mb-4">
-                A learning Management System on cryptocurrency with intuitive
-                user interface.
+              <h4 class="font-bold text-xl mb-3 text-[#5D4037]">
+                To Do Application
+              </h4>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
+                A task management system with an intuitive interactive interface
+                for efficient task track oganization.
               </p>
-              <div class="flex gap-2 flex-wrap">
+              <div class="flex gap-2 flex-wrap mb-4">
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
-                  >Firebase</span
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
+                  >Html</span
                 >
                 <span
-                  class="bg-gray-100 px-3 py-1 text-xs rounded-full text-[#6C442F]"
-                  >TypeScript</span
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
+                  >Tailwind Css</span
+                >
+                <span
+                  class="bg-[#FFD54F] px-3 py-1 text-xs rounded-full text-[#5D4037]"
+                  >Noje.Js</span
                 >
               </div>
+
               <a
-                href="#"
-                class="inline-block mt-4 text-[#6C442F] hover:text-[#FFDE59] transition-colors"
-                >View Project →</a
+                href="https://mest-todo-app.vercel.app/"
+                class="inline-block bg-[#5D4037] text-white py-2 px-4 rounded-md hover:bg-[#FFD54F] hover:text-[#5D4037] transition-colors text-sm font-medium"
               >
+                View Details
+                <i class="fas fa-arrow-right ml-1"></i>
+              </a>
             </div>
           </div>
         </div>
 
-        <!-- Other Projects Section -->
-        <div class="mt-20">
-          <h3 class="text-2xl font-bold text-[#6C442F] mb-8 text-center">
-            Other Projects
-          </h3>
-
-          <div class="carousel-container">
-            <div class="carousel" id="portfolio-carousel">
-              <div class="carousel-item">
-                <div class="carousel-item-inner nostalgia relative group">
-                  <div
-                    class="absolute inset-0 bg-[#6C442F] opacity-50 group-hover:opacity-70 transition-opacity"
-                  ></div>
-                  <div class="relative z-10 text-white text-center p-6">
-                    <h3 class="text-xl font-bold mb-2">Restaurant Website</h3>
-                    <p class="mb-4">
-                      A modern website for a high-end restaurant
-                    </p>
-                    <div class="flex justify-center gap-2">
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >HTML</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >CSS</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >JS</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-item">
-                <div class="carousel-item-inner workoholic relative group">
-                  <div
-                    class="absolute inset-0 bg-[#6C442F] opacity-50 group-hover:opacity-70 transition-opacity"
-                  ></div>
-                  <div class="relative z-10 text-white text-center p-6">
-                    <h3 class="text-xl font-bold mb-2">Painting Website</h3>
-                    <p class="mb-4">Art gallery and e-commerce platform</p>
-                    <div class="flex justify-center gap-2">
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >HTML</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >CSS</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-item">
-                <div class="carousel-item-inner zookeeper relative group">
-                  <div
-                    class="absolute inset-0 bg-[#6C442F] opacity-50 group-hover:opacity-70 transition-opacity"
-                  ></div>
-                  <div class="relative z-10 text-white text-center p-6">
-                    <h3 class="text-xl font-bold mb-2">To-Do Application</h3>
-                    <p class="mb-4">Task management with clean interface</p>
-                    <div class="flex justify-center gap-2">
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >HTML</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >Tailwind</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >JS</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="carousel-item">
-                <div class="carousel-item-inner bg-[#e8fcef] relative group">
-                  <div
-                    class="absolute inset-0 bg-[#6C442F] opacity-50 group-hover:opacity-70 transition-opacity"
-                  ></div>
-                  <div class="relative z-10 text-white text-center p-6">
-                    <h3 class="text-xl font-bold mb-2">Admin Dashboard</h3>
-                    <p class="mb-4">Static admin panel with clean UI</p>
-                    <div class="flex justify-center gap-2">
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >HTML</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >CSS</span
-                      >
-                      <span class="bg-white/20 px-2 py-1 text-xs rounded"
-                        >JS</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="carousel-dots" id="carousel-dots"></div>
+        <div class="mt-16 text-center fade-in">
+          <a
+            href="#"
+            class="inline-block bg-[#FFD54F] text-[#5D4037] py-3 px-8 rounded-md hover:bg-[#5D4037] hover:text-white transition-colors font-medium shadow-lg"
+          >
+            View All Projects
+            <i class="fas fa-long-arrow-alt-right ml-2"></i>
+          </a>
         </div>
       </div>
     </section>
@@ -620,109 +1135,469 @@
     <!-- Contact Section -->
     <section id="contact" class="main-content py-20">
       <div class="container mx-auto px-6 max-w-3xl">
-        <h2 class="text-4xl font-bold mb-3 text-center">
-          LET'S WORK <span class="text-[#6C442F]">TOGETHER</span>
-        </h2>
-        <p class="text-gray-600 text-center mb-12">
-          Bringing your ideas to life with clean, efficient, and scalable code.
-        </p>
+        <div class="mb-12 text-center fade-in">
+          <span
+            class="inline-block py-1 px-4 bg-[#FFD54F] text-[#5D4037] font-medium text-sm rounded-full mb-3"
+            >GET IN TOUCH</span
+          >
+          <h2 class="text-4xl font-bold text-[#5D4037] mb-4">
+            Let's Work <span class="text-[#5D4037]">Together</span>
+          </h2>
+          <div class="w-20 h-1 bg-[#FFD54F] mx-auto"></div>
+          <p class="text-gray-600 dark:text-gray-400 mt-6 max-w-lg mx-auto">
+            Have an exciting project or opportunity? I'd love to hear about it.
+            Let's create something amazing together.
+          </p>
+        </div>
 
-        <form id="contactForm" class="bg-white rounded-lg shadow-lg p-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="form-group">
-              <input
-                type="text"
-                class="form-control w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFDE59]"
-                id="fullName"
-                placeholder="Full Name*"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="email"
-                class="form-control w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFDE59]"
-                id="email"
-                placeholder="Email*"
-                required
-              />
-            </div>
-          </div>
+        <div class="relative fade-in">
+          <div
+            class="absolute -top-10 -left-10 w-20 h-20 bg-[#FFD54F] rounded-full opacity-20"
+          ></div>
+          <div
+            class="absolute -bottom-10 -right-10 w-20 h-20 bg-[#FFD54F] rounded-full opacity-20"
+          ></div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="form-group">
-              <input
-                type="tel"
-                class="form-control w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFDE59]"
-                id="phone"
-                placeholder="Phone"
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="text"
-                class="form-control w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFDE59]"
-                id="subject"
-                placeholder="Subject"
-              />
-            </div>
-          </div>
-
-          <div class="form-group mb-8">
-            <textarea
-              class="form-control w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FFDE59]"
-              id="message"
-              placeholder="Your Message"
-              rows="5"
-            ></textarea>
-          </div>
-
-          <div class="text-center">
-            <button
-              type="submit"
-              class="bg-[#FFDE59] hover:bg-[#6C442F] text-white py-3 px-8 rounded-md transition-colors font-medium inline-flex items-center"
-            >
-              Let's Talk
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5 ml-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
+          <form
+            id="contactForm"
+            class="bg-white rounded-xl shadow-2xl p-8 relative z-10"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="form-group">
+                <label
+                  for="fullName"
+                  class="block text-gray-700 dark:text-gray-300 mb-2 font-medium"
+                  >Full Name <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-input w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD54F] text-gray-700 dark:text-white"
+                  id="fullName"
+                  placeholder="Enter Full Name"
+                  required
                 />
-              </svg>
-            </button>
+              </div>
+              <div class="form-group">
+                <label
+                  for="email"
+                  class="block text-gray-700 dark:text-gray-300 mb-2 font-medium"
+                  >Email <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="email"
+                  class="form-input w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD54F] text-gray-700 dark:text-white"
+                  id="email"
+                  placeholder="example@email.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="form-group">
+                <label
+                  for="phone"
+                  class="block text-gray-700 dark:text-gray-300 mb-2 font-medium"
+                  >Phone Number</label
+                >
+                <input
+                  type="tel"
+                  class="form-input w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD54F] text-gray-700 dark:text-white"
+                  id="phone"
+                  placeholder="Enter Phone Number"
+                />
+              </div>
+              <div class="form-group">
+                <label
+                  for="subject"
+                  class="block text-gray-700 dark:text-gray-300 mb-2 font-medium"
+                  >Subject</label
+                >
+                <input
+                  type="text"
+                  class="form-input w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD54F] text-gray-700 dark:text-white"
+                  id="subject"
+                  placeholder="Enter Subject Here"
+                />
+              </div>
+            </div>
+
+            <div class="form-group mb-8">
+              <label
+                for="message"
+                class="block text-gray-700 dark:text-gray-300 mb-2 font-medium"
+                >Message <span class="text-red-500">*</span></label
+              >
+              <textarea
+                class="form-input w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD54F] text-gray-700 dark:text-white"
+                id="message"
+                placeholder="Tell me about your project..."
+                rows="5"
+                required
+              ></textarea>
+            </div>
+
+            <div class="text-center">
+              <button
+                type="submit"
+                class="contact-btn bg-[#FFD54F] hover:bg-[#5D4037] text-[#5D4037] hover:text-white py-3 px-10 rounded-lg transition-colors font-medium inline-flex items-center shadow-lg"
+              >
+                Send Message
+                <i class="fas fa-paper-plane ml-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 fade-in">
+          <!-- Contact Info 1 -->
+          <div
+            class="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-all"
+          >
+            <div
+              class="w-14 h-14 bg-[#FFD54F] text-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-map-marker-alt text-xl"></i>
+            </div>
+            <h4 class="text-lg font-semibold mb-2">Location</h4>
+            <p class="text-gray-600 dark:text-gray-400">Accra, Ghana</p>
           </div>
-        </form>
+
+          <!-- Contact Info 2 -->
+          <div
+            class="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-all"
+          >
+            <div
+              class="w-14 h-14 bg-[#FFD54F] text-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-envelope text-xl"></i>
+            </div>
+            <h4 class="text-lg font-semibold mb-2">Email</h4>
+            <p class="text-gray-600 dark:text-gray-400 truncate">
+              contact@gertrudedev.com
+            </p>
+          </div>
+
+          <!-- Contact Info 3 -->
+          <div
+            class="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-all"
+          >
+            <div
+              class="w-14 h-14 bg-[#FFD54F] text-[#5D4037] rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <i class="fas fa-phone-alt text-xl"></i>
+            </div>
+            <h4 class="text-lg font-semibold mb-2">Phone</h4>
+            <p class="text-gray-600 dark:text-gray-400">+233 50 123 4567</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#6C442F] text-white py-8">
-      <div class="container mx-auto px-6 text-center">
-        <h1 class="text-2xl font-bold mb-4">Gertrude.</h1>
-        <p class="mb-6">Thank you for visiting my portfolio!</p>
-        <div class="flex justify-center space-x-6 mb-6">
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="github" class="w-5 h-5"></i
-          ></a>
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="linkedin" class="w-5 h-5"></i
-          ></a>
-          <a href="#" class="hover:text-[#FFDE59] transition-colors"
-            ><i data-lucide="mail" class="w-5 h-5"></i
-          ></a>
+    <footer class="bg-[#5D4037] ml-[18%] text-white py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <!-- About Column -->
+          <div class="md:col-span-2">
+            <h3 class="text-2xl font-bold mb-4 relative">
+              Gertrude.
+              <span
+                class="absolute -bottom-2 left-0 w-12 h-1 bg-[#FFD54F]"
+              ></span>
+            </h3>
+            <p class="my-6 text-gray-300 max-w-md">
+              A passionate web developer focused on creating beautiful,
+              functional, and user-friendly digital experiences. Let's turn your
+              ideas into reality.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="social-icon">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="#" class="social-icon">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+              <a href="#" class="social-icon">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="social-icon">
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 relative inline-block">
+              Quick Links
+              <span
+                class="absolute -bottom-2 left-0 w-8 h-1 bg-[#FFD54F]"
+              ></span>
+            </h4>
+            <ul class="mt-6 space-y-3">
+              <li>
+                <a
+                  href="#home"
+                  class="text-gray-300 hover:text-[#FFD54F] transition-colors"
+                >
+                  <i
+                    class="fas fa-chevron-right mr-2 text-[#FFD54F] text-xs"
+                  ></i>
+                  Home
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#about"
+                  class="text-gray-300 hover:text-[#FFD54F] transition-colors"
+                >
+                  <i
+                    class="fas fa-chevron-right mr-2 text-[#FFD54F] text-xs"
+                  ></i>
+                  About
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#experience"
+                  class="text-gray-300 hover:text-[#FFD54F] transition-colors"
+                >
+                  <i
+                    class="fas fa-chevron-right mr-2 text-[#FFD54F] text-xs"
+                  ></i>
+                  Experience
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#works"
+                  class="text-gray-300 hover:text-[#FFD54F] transition-colors"
+                >
+                  <i
+                    class="fas fa-chevron-right mr-2 text-[#FFD54F] text-xs"
+                  ></i>
+                  Portfolio
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  class="text-gray-300 hover:text-[#FFD54F] transition-colors"
+                >
+                  <i
+                    class="fas fa-chevron-right mr-2 text-[#FFD54F] text-xs"
+                  ></i>
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact Info -->
+          <div>
+            <h4 class="text-lg font-semibold mb-4 relative inline-block">
+              Contact Info
+              <span
+                class="absolute -bottom-2 left-0 w-8 h-1 bg-[#FFD54F]"
+              ></span>
+            </h4>
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#FFD54F]"></i>
+                <span class="text-gray-300">Accra, Ghana</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-envelope mt-1 mr-3 text-[#FFD54F]"></i>
+                <span class="text-gray-300">contact@gertrudedev.com</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-phone-alt mt-1 mr-3 text-[#FFD54F]"></i>
+                <span class="text-gray-300">+233 50 123 4567</span>
+              </li>
+            </ul>
+          </div>
         </div>
-        <p class="text-sm opacity-70">
-          © 2025 Gertrude Ans. All rights reserved.
-        </p>
+
+        <div class="border-t border-gray-700 pt-6 mt-6 text-center">
+          <p class="text-sm text-gray-400">
+            © 2025 <span class="text-[#FFD54F]">Gertrude Ans</span>. All rights
+            reserved.
+          </p>
+        </div>
       </div>
     </footer>
 
-    <script src="./scripts/portfolio.js"></script>
+    <!-- Back to Top Button -->
+    <button
+      id="backToTop"
+      class="fixed bottom-5 right-5 bg-[#FFD54F] text-[#5D4037] w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all z-50"
+    >
+      <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+      // Mobile Menu Toggle
+      const body = document.body;
+      const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+      const mobileNavOverlay = document.getElementById("mobileNavOverlay");
+      const menuIcon = document.getElementById("menuIcon");
+
+      mobileMenuToggle.addEventListener("click", () => {
+        body.classList.toggle("mobile-nav-active");
+        menuIcon.classList.toggle("fa-bars");
+        menuIcon.classList.toggle("fa-times");
+      });
+
+      mobileNavOverlay.addEventListener("click", () => {
+        body.classList.remove("mobile-nav-active");
+        menuIcon.classList.add("fa-bars");
+        menuIcon.classList.remove("fa-times");
+      });
+
+      // Close mobile menu when clicking nav links on mobile
+      const navLinks = document.querySelectorAll(".nav-link");
+      navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 768) {
+            body.classList.remove("mobile-nav-active");
+            menuIcon.classList.add("fa-bars");
+            menuIcon.classList.remove("fa-times");
+          }
+        });
+      });
+
+      // Theme Toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+
+      // Check if user has a preferred theme
+      if (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.body.classList.add("dark-mode");
+        themeIcon.classList.replace("fa-moon", "fa-sun");
+      }
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        if (document.body.classList.contains("dark-mode")) {
+          themeIcon.classList.replace("fa-moon", "fa-sun");
+          localStorage.setItem("theme", "dark");
+        } else {
+          themeIcon.classList.replace("fa-sun", "fa-moon");
+          localStorage.setItem("theme", "light");
+        }
+      });
+
+      // Smooth scroll for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const targetId = this.getAttribute("href").substring(1);
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 50,
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      // Active navigation state based on scroll position
+      const sections = document.querySelectorAll("section");
+      const navItems = document.querySelectorAll(".nav-link");
+
+      window.addEventListener("scroll", () => {
+        let current = "";
+
+        sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+
+          if (pageYOffset >= sectionTop - 150) {
+            current = section.getAttribute("id");
+          }
+        });
+
+        navItems.forEach((item) => {
+          item.classList.remove("active");
+          if (item.getAttribute("href").substring(1) === current) {
+            item.classList.add("active");
+          }
+        });
+      });
+
+      // Back to Top Button
+      const backToTopButton = document.getElementById("backToTop");
+
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 300) {
+          backToTopButton.classList.add("opacity-100", "visible");
+        } else {
+          backToTopButton.classList.remove("opacity-100", "visible");
+        }
+      });
+
+      backToTopButton.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+
+      // Animations with GSAP
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Animate the fade-in elements
+        const fadeElements = document.querySelectorAll(".fade-in");
+
+        fadeElements.forEach((element) => {
+          gsap.fromTo(
+            element,
+            {
+              opacity: 0,
+              y: 50,
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              scrollTrigger: {
+                trigger: element,
+                start: "top 90%",
+                toggleClass: "appear",
+              },
+            }
+          );
+        });
+
+        // Animate skill bars
+        const skillBars = document.querySelectorAll(".skill-percentage");
+
+        skillBars.forEach((bar) => {
+          const width = bar.style.width;
+          bar.style.width = "0";
+
+          gsap.to(bar, {
+            width: width,
+            duration: 1.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: bar.parentElement,
+              start: "top 80%",
+            },
+          });
+        });
+      });
+    </script>
   </body>
 </html>
